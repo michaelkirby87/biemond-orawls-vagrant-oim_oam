@@ -1,4 +1,4 @@
-node 'oimdb.example.com'  {
+node 'db.example.com'  {
   include oradb_os
   include oradb_11g
 }

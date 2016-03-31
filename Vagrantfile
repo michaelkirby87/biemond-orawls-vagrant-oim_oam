@@ -6,38 +6,38 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.define "oim1admin" , primary: true do |oim1admin|
+  config.vm.define "igdadmin" , primary: true do |igdadmin|
 
-    oim1admin.vm.box = "OEL6_6-x86_64"
-    oim1admin.vm.box_url = "https://dl.dropboxusercontent.com/s/i247jykp2obw3ln/OEL6_6-x86_64.box"
+    igdadmin.vm.box = "OEL6_6-x86_64"
+    igdadmin.vm.box_url = "https://dl.dropboxusercontent.com/s/i247jykp2obw3ln/OEL6_6-x86_64.box"
 
-    oim1admin.vm.provider :vmware_fusion do |v, override|
+    igdadmin.vm.provider :vmware_fusion do |v, override|
       override.vm.box = "OEL-6.6-x86_64-vmware"
       override.vm.box_url = "https://dl.dropboxusercontent.com/s/96qaaklh1ya6qnd/OEL6_6-x86_64-vmware.box"
     end
 
-    oim1admin.vm.hostname = "oim1admin.example.com"
+    igdadmin.vm.hostname = "igdadmin.example.com"
 
-    oim1admin.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777","fmode=777"]
-    # oim1admin.vm.synced_folder "/Users/edwin/software", "/software", :mount_options => ["dmode=777","fmode=777"]
+    igdadmin.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777","fmode=777"]
+    # igdadmin.vm.synced_folder "/Users/edwin/software", "/software", :mount_options => ["dmode=777","fmode=777"]
 
 
-    oim1admin.vm.network :private_network, ip: "10.10.10.61"
+    igdadmin.vm.network :private_network, ip: "10.10.10.70"
 
-    oim1admin.vm.provider :vmware_fusion do |vb|
+    igdadmin.vm.provider :vmware_fusion do |vb|
       vb.vmx["numvcpus"] = "2"
       vb.vmx["memsize"] = "5548"
     end
 
-    oim1admin.vm.provider :virtualbox do |vb|
+    igdadmin.vm.provider :virtualbox do |vb|
       vb.customize ["modifyvm", :id, "--memory", "5548"]
-      vb.customize ["modifyvm", :id, "--name"  , "oim1admin"]
+      vb.customize ["modifyvm", :id, "--name"  , "igdadmin"]
       vb.customize ["modifyvm", :id, "--cpus"  , 2]
     end
 
-    oim1admin.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml;rm -rf /etc/puppet/modules;ln -sf /vagrant/puppet/modules /etc/puppet/modules"
+    igdadmin.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml;rm -rf /etc/puppet/modules;ln -sf /vagrant/puppet/modules /etc/puppet/modules"
 
-    oim1admin.vm.provision :puppet do |puppet|
+    igdadmin.vm.provision :puppet do |puppet|
       puppet.manifests_path    = "puppet/manifests"
       puppet.module_path       = "puppet/modules"
       puppet.manifest_file     = "site.pp"
@@ -97,37 +97,37 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   end
 
-  config.vm.define "oimdb" , primary: true do |oimdb|
+  config.vm.define "db" , primary: true do |db|
 
-    oimdb.vm.box = "OEL6_6-x86_64"
-    oimdb.vm.box_url = "https://dl.dropboxusercontent.com/s/i247jykp2obw3ln/OEL6_6-x86_64.box"
+    db.vm.box = "OEL6_6-x86_64"
+    db.vm.box_url = "https://dl.dropboxusercontent.com/s/i247jykp2obw3ln/OEL6_6-x86_64.box"
 
-    oimdb.vm.provider :vmware_fusion do |v, override|
+    db.vm.provider :vmware_fusion do |v, override|
       override.vm.box = "OEL-6.6-x86_64-vmware"
       override.vm.box_url = "https://dl.dropboxusercontent.com/s/96qaaklh1ya6qnd/OEL6_6-x86_64-vmware.box"
     end
 
-    oimdb.vm.hostname = "oimdb.example.com"
-    oimdb.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777","fmode=777"]
-    # oimdb.vm.synced_folder "/Users/edwin/software", "/software", :mount_options => ["dmode=777","fmode=777"]
+    db.vm.hostname = "db.example.com"
+    db.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777","fmode=777"]
+    # db.vm.synced_folder "/Users/edwin/software", "/software", :mount_options => ["dmode=777","fmode=777"]
 
-    oimdb.vm.network :private_network, ip: "10.10.10.9"
+    db.vm.network :private_network, ip: "10.10.10.20"
 
-    oimdb.vm.provider :vmware_fusion do |vb|
+    db.vm.provider :vmware_fusion do |vb|
       vb.vmx["numvcpus"] = "2"
       vb.vmx["memsize"] = "2532"
     end
 
-    oimdb.vm.provider :virtualbox do |vb|
+    db.vm.provider :virtualbox do |vb|
       vb.customize ["modifyvm"     , :id, "--memory", "2532"]
-      vb.customize ["modifyvm"     , :id, "--name"  , "oimdb"]
+      vb.customize ["modifyvm"     , :id, "--name"  , "db"]
       vb.customize ["modifyvm"     , :id, "--cpus"  , 2]
     end
 
 
-    oimdb.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml;rm -rf /etc/puppet/modules;ln -sf /vagrant/puppet/modules /etc/puppet/modules"
+    db.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml;rm -rf /etc/puppet/modules;ln -sf /vagrant/puppet/modules /etc/puppet/modules"
 
-    oimdb.vm.provision :puppet do |puppet|
+    db.vm.provision :puppet do |puppet|
       puppet.manifests_path    = "puppet/manifests"
       puppet.module_path       = "puppet/modules"
       puppet.manifest_file     = "db.pp"

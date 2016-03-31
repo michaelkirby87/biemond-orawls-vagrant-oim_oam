@@ -1,15 +1,17 @@
 ---
 
 hosts:
-  'oimdb.example.com':
-    ip:                "10.10.10.9"
-    host_aliases:      'oimdb'
+  'db.example.com':
+    #ip:                "10.10.10.9"
+    ip:                "10.10.10.20"
+    host_aliases:      'db'
   'localhost':
     ip:                "127.0.0.1"
     host_aliases:      'localhost.localdomain,localhost4,localhost4.localdomain4'
-  'oim1admin.example.com':
-    ip:                "10.10.10.61"
-    host_aliases:      'oim1admin'
+  'igdadmin.example.com':
+    #ip:                "10.10.10.61"
+    ip:                "10.10.10.70"
+    host_aliases:      'igdadmin'
 
 
 # global WebLogic vars
@@ -29,8 +31,11 @@ wls_source:               &wls_source               "/vagrant"
 wls_jdk_home_dir:         &wls_jdk_home_dir         "/usr/java/latest"
 wls_log_dir:              &wls_log_dir              "/var/log/weblogic"
 
-wls_domains_dir:          &wls_domains_dir          '/opt/oracle/wlsdomains/domains'
-wls_apps_dir:             &wls_apps_dir             '/opt/oracle/wlsdomains/applications'
+#wls_domains_dir:          &wls_domains_dir          '/opt/oracle/wlsdomains/domains'
+#wls_apps_dir:             &wls_apps_dir             '/opt/oracle/wlsdomains/applications'
+
+wls_domains_dir:          &wls_domains_dir          '/opt/oracle/config/domains'
+wls_apps_dir:             &wls_apps_dir             '/opt/oracle/config/applications'
 
 wls_jsse_enabled:         true
 

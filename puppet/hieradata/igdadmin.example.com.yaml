@@ -1,0 +1,143 @@
+---
+
+orawls::weblogic::log_output:   true
+
+wls_os_user:              &wls_os_user              "oracle"
+wls_weblogic_user:        &wls_weblogic_user        "weblogic"
+wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware11g/wlserver_10.3"
+wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware11g"
+
+# when you have just one domain on a server
+domain_name:                &domain_name                "IAMGovernanceDomain"
+domain_adminserver:         &domain_adminserver         "AdminServer"
+domain_adminserver_port:    &domain_adminserver_port    7001
+domain_nodemanager_port:    &domain_nodemanager_port    5556
+domain_wls_password:        &domain_wls_password        "weblogic1"
+
+orautils::os_domain_typeParam: "oim"
+orautils::os_domain:           *domain_name
+orautils::os_domain_path:      "/opt/oracle/wlsdomains/domains/IAMGovernanceDomain"
+orautils::node_mgr_path:       "/opt/oracle/middleware11g/wlserver_10.3/server/bin"
+orautils::node_mgr_address:    '10.10.10.70'
+orautils::wls_password:        *domain_wls_password
+orautils::wls_adminserver:     *domain_adminserver
+
+logoutput:                     &logoutput                     true
+
+# FMW installation on top of WebLogic 10.3.6
+fmw_installations:
+  'oim11.1.2.3':
+    fmw_product:             "oim"
+    fmw_file1:               "ofm_iam_generic_11.1.2.3.0_disk1_1of3.zip"
+    fmw_file2:               "ofm_iam_generic_11.1.2.3.0_disk1_2of3.zip"
+    fmw_file3:               "ofm_iam_generic_11.1.2.3.0_disk1_3of3.zip"
+    log_output:              true
+    remote_file:             false
+  'soaPS7':
+    fmw_product:             "soa"
+    fmw_file1:               "V75849-01_1of2.zip"
+    fmw_file2:               "V75849-01_2of2.zip"
+    log_output:              true
+    remote_file:             false
+  
+opatch_instances:
+
+# when you have just one domain on a server
+domain_name:                *domain_name
+domain_adminserver:         *domain_adminserver
+domain_adminserver_address: "10.10.10.70"
+domain_adminserver_port:    *domain_adminserver_port
+domain_nodemanager_port:    *domain_nodemanager_port
+domain_wls_password:        *domain_wls_password
+domain_user_config_file:    "/home/oracle/oracle-IAMGovernanceDomain-WebLogicConfig.properties"
+domain_user_key_file:       "/home/oracle/oracle-IAMGovernanceDomain-WebLogicKey.properties"
+
+# create a standard domain
+domain_instances:
+  'IAMGovernanceDomain':
+    version:                  1112
+    domain_template:          "oim"
+    development_mode:         true
+    log_output:               *logoutput
+    repository_database_url:  "jdbc:oracle:thin:@db.example.com:1521/oimrepos.example.com"
+    repository_prefix:        "DEV"
+    repository_password:      "Welcome01"
+    repository_sys_password:  "Welcome01"
+    rcu_database_url:         "db.example.com:1521/oimrepos.example.com"
+
+# create and startup the nodemanager
+nodemanager_instances:
+  'nodemanager':
+     #nodemanager_address:  "10.10.10.61"
+     nodemanager_address:  "10.10.10.70"
+     log_output:           *logoutput
+
+wls_setting_instances:
+  'default':
+    user:                         *wls_os_user
+    weblogic_home_dir:            *wls_weblogic_home_dir
+    connect_url:                  "t3://%{hiera('domain_adminserver_address')}:7001"
+    weblogic_user:                *wls_weblogic_user
+    weblogic_password:            *domain_wls_password
+    require:                      Orawls::Domain[IAMGovernanceDomain]
+    debug_module:                 true
+    archive_path:                 '/var/tmp/install/default_domain'
+    use_default_value_when_empty: true
+
+# startup adminserver for extra configuration
+control_instances:
+  'startWLSAdminServer':
+     domain_name:          *domain_name
+     server_type:          'admin'
+     target:               'Server'
+     server:               *domain_adminserver
+     action:               'start'
+     log_output:           *logoutput
+
+control_managed_instances:
+  'startWLSSoaServer':
+     domain_name:          *domain_name
+     server_type:          'managed'
+     target:               'Server'
+     server:               'soa_server1'
+     action:               'start'
+     log_output:           *logoutput
+  'startWLSOimServer':
+     domain_name:          *domain_name
+     server_type:          'managed'
+     target:               'Server'
+     server:               'oim_server1'
+     action:               'start'
+     log_output:           *logoutput
+ 
+fmwlogdir_instances:
+  'AdminServer':
+     log_output:      true
+     server:          *domain_adminserver
+  'soa_server1':
+     log_output:      true
+     server:          'soa_server1'
+  'oim_server1':
+     log_output:      true
+     server:          'oim_server1'
+ 
+# create password file for WLST utility
+userconfig_instances:
+  'IAMGovernanceDomain':
+     log_output:           *logoutput
+     user_config_dir:      '/home/oracle'
+
+oimconfig_instances:
+  'IAMGovernanceDomain':
+    version:                    1112
+    oim_home:                   '/opt/oracle/middleware11g/Oracle_IDM1'
+    server_config:              true
+    oim_password:               'Welcome01'
+    remote_config:              false
+    keystore_password:          'Welcome01'
+    design_config:              false
+    oimserver_hostname:         'igdadmin.example.com'
+    oimserver_port:             '14000'
+    repository_database_url:    "db.example.com:1521:oimrepos.example.com"
+    repository_prefix:          "DEV"
+    repository_password:        "Welcome01"
