@@ -56,7 +56,8 @@ domain_user_key_file:       "/home/oracle/oracle-IAMGovernanceDomain-WebLogicKey
 domain_instances:
   'IAMGovernanceDomain':
     version:                  1112
-    domain_template:          "oim"
+    #domain_template:          "oim"
+    domain_template:          "igd"
     development_mode:         true
     log_output:               *logoutput
     repository_database_url:  "jdbc:oracle:thin:@db.example.com:1521/oimrepos.example.com"

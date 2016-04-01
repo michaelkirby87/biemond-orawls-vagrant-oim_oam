@@ -296,6 +296,11 @@ define orawls::domain (
 
       $wlstPath      = "${middleware_home_dir}/Oracle_IDM1/common/bin"
 
+    } elsif $domain_template == 'igd' {
+      $extensionsTemplateFile = 'orawls/domains/extensions/igd_template.py.erb'
+
+      $wlstPath      = "${middleware_home_dir}/Oracle_IDM1/common/bin"
+
     } elsif $domain_template == 'oud' {
       $extensionsTemplateFile = 'orawls/domains/extensions/oud_template.py.erb'
 
